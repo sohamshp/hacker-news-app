@@ -109,9 +109,9 @@ public class TopFragment extends Fragment {
 
         objs = new ArrayList<JSONObject>();
 
-        for (int i=0 ; i<25 ; i++) {
+        /*for (int i=0 ; i<25 ; i++) {
             objs.add(template);
-        }
+        }*/
 
         adapter = new CustomAdapter(objs);
         recyclerView.setAdapter(adapter);
@@ -173,7 +173,7 @@ public class TopFragment extends Fragment {
                 while ((line = in.readLine()) != null) {
                     sb.append(line);
                 }
-                System.out.println(sb.toString());
+                //System.out.println(sb.toString());
                 result = new JSONArray(sb.toString());
                 in.close();
                 return result;
@@ -193,20 +193,17 @@ public class TopFragment extends Fragment {
             String baseUrl = "https://hacker-news.firebaseio.com/v0/item/";
             String endUrl = ".json";
 
-            //adapter = new CustomAdapter(objs);
-            //recyclerView.setAdapter(adapter);
-
             for (int i=startPos ; i<endPos ; i++) {
                 try {
                     new getTopStory(getActivity(), i).execute(baseUrl +jsonArray.get(i).toString() + endUrl);
-                    System.out.println(jsonArray.get(i));
+                    //System.out.println(jsonArray.get(i));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
 
-            adapter = new CustomAdapter(objs);
-            recyclerView.setAdapter(adapter);
+            //adapter = new CustomAdapter(objs);
+            //recyclerView.setAdapter(adapter);
         }
     }
 
@@ -237,7 +234,7 @@ public class TopFragment extends Fragment {
                 while ((line = in.readLine()) != null) {
                     sb.append(line);
                 }
-                System.out.println(sb);
+                //System.out.println(sb);
                 obj = new JSONObject(sb.toString());
                 in.close();
             } catch(Exception e) {
@@ -251,15 +248,9 @@ public class TopFragment extends Fragment {
 
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
-            //objs.add(this.insertIndex, jsonObject);
-            objs.set(this.insertIndex, jsonObject);
-            adapter = new CustomAdapter(objs);
-            recyclerView.setAdapter(adapter);
-
-            //RelativeLayout r = (RelativeLayout) getActivity().findViewById(R.id.relLay);
-
-            //adapter.bindViewHolder(new CustomAdapter.ViewHolder(r), this.insertIndex);
-
+            objs.add(jsonObject);
+            CustomAdapter ca = (CustomAdapter) recyclerView.getAdapter();
+            ca.notifyDataSetChanged();
         }
     }
 }

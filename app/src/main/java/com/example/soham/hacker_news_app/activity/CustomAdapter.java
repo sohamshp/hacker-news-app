@@ -42,10 +42,12 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             user = (TextView) ll.findViewById(R.id.userCard);
             score = (TextView) ll.findViewById(R.id.scoreCard);
         }
+
     }
 
     public CustomAdapter(List<JSONObject> objList) {
         this.objList = objList;
+
     }
 
     @Override
@@ -72,7 +74,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         }
     }
 
-    @Override
     public int getItemCount() {
         return objList.size();
     }
