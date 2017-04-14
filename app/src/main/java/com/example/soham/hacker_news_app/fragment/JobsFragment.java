@@ -103,15 +103,11 @@ public class JobsFragment extends Fragment {
 
         objs = new ArrayList<JSONObject>();
 
-        for (int i=0 ; i<25 ; i++) {
-            objs.add(template);
-        }
-
         adapter = new CustomAdapter(objs);
         recyclerView.setAdapter(adapter);
 
         try {
-            new getJobStories(getActivity(), jarr).execute("https://hacker-news.firebaseio.com/v0/newstories.json");
+            new getJobStories(getActivity(), jarr).execute("https://hacker-news.firebaseio.com/v0/jobstories.json");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -161,8 +157,6 @@ public class JobsFragment extends Fragment {
                     sb.append(line);
                 }
                 result = new JSONArray(sb.toString());
-                System.out.println("Job Stories");
-                System.out.println(sb.toString());
                 in.close();
             } catch(Exception e) {
                 e.printStackTrace();
@@ -188,9 +182,6 @@ public class JobsFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
-
-            adapter = new CustomAdapter(objs);
-            recyclerView.setAdapter(adapter);
         }
     }
 
@@ -220,10 +211,8 @@ public class JobsFragment extends Fragment {
                 String line;
                 StringBuilder sb = new StringBuilder();
                 while ((line = in.readLine()) != null) {
-                    //System.out.println(line);
                     sb.append(line);
                 }
-                //System.out.println(sb);
                 obj = new JSONObject(sb.toString());
                 in.close();
             } catch(Exception e) {

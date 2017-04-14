@@ -104,10 +104,6 @@ public class NewFragment extends Fragment {
 
         objs = new ArrayList<JSONObject>();
 
-        for (int i=0 ; i<25 ; i++) {
-            objs.add(template);
-        }
-
         adapter = new CustomAdapter(objs);
         recyclerView.setAdapter(adapter);
 
@@ -183,14 +179,10 @@ public class NewFragment extends Fragment {
             for (int i=startPos ; i<endPos ; i++) {
                 try {
                     new getNewStory(getActivity(), i).execute(baseUrl +jsonArray.get(i).toString() + endUrl);
-                    System.out.println(jsonArray.get(i));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-
-            adapter = new CustomAdapter(objs);
-            recyclerView.setAdapter(adapter);
         }
 
     }
@@ -221,10 +213,8 @@ public class NewFragment extends Fragment {
                 String line;
                 StringBuilder sb = new StringBuilder();
                 while ((line = in.readLine()) != null) {
-                    //System.out.println(line);
                     sb.append(line);
                 }
-                //System.out.println(sb);
                 obj = new JSONObject(sb.toString());
                 in.close();
             } catch(Exception e) {

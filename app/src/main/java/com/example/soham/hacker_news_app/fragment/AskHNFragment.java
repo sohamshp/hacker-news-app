@@ -103,15 +103,11 @@ public class AskHNFragment extends Fragment {
 
         objs = new ArrayList<JSONObject>();
 
-        for (int i=0 ; i<25 ; i++) {
-            objs.add(template);
-        }
-
         adapter = new CustomAdapter(objs);
         recyclerView.setAdapter(adapter);
 
         try {
-            new getAskStories(getActivity(), jarr).execute("https://hacker-news.firebaseio.com/v0/newstories.json");
+            new getAskStories(getActivity(), jarr).execute("https://hacker-news.firebaseio.com/v0/askstories.json");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -160,8 +156,6 @@ public class AskHNFragment extends Fragment {
                     sb.append(line);
                 }
                 result = new JSONArray(sb.toString());
-                System.out.println("Ask Stories");
-                System.out.println(sb.toString());
                 in.close();
             } catch(Exception e) {
                 e.printStackTrace();
@@ -182,14 +176,10 @@ public class AskHNFragment extends Fragment {
             for (int i=startPos ; i<endPos ; i++) {
                 try {
                     new getAskStory(getActivity(), i).execute(baseUrl +jsonArray.get(i).toString() + endUrl);
-                    System.out.println(jsonArray.get(i));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-
-            adapter = new CustomAdapter(objs);
-            recyclerView.setAdapter(adapter);
         }
     }
 
@@ -222,7 +212,6 @@ public class AskHNFragment extends Fragment {
                     //System.out.println(line);
                     sb.append(line);
                 }
-                //System.out.println(sb);
                 obj = new JSONObject(sb.toString());
                 in.close();
             } catch(Exception e) {

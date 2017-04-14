@@ -104,10 +104,6 @@ public class ShowHNFragment extends Fragment {
 
         objs = new ArrayList<JSONObject>();
 
-        for (int i=0 ; i<25 ; i++) {
-            objs.add(template);
-        }
-
         adapter = new CustomAdapter(objs);
         recyclerView.setAdapter(adapter);
 
@@ -162,8 +158,6 @@ public class ShowHNFragment extends Fragment {
                     sb.append(line);
                 }
                 result = new JSONArray(sb.toString());
-                System.out.println("Show Stories");
-                System.out.println(sb.toString());
                 in.close();
                 return result;
             } catch(Exception e) {
@@ -185,14 +179,10 @@ public class ShowHNFragment extends Fragment {
             for (int i=startPos ; i<endPos ; i++) {
                 try {
                     new getShowStory(getActivity(), i).execute(baseUrl +jsonArray.get(i).toString() + endUrl);
-                    System.out.println(jsonArray.get(i));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-
-            adapter = new CustomAdapter(objs);
-            recyclerView.setAdapter(adapter);
         }
     }
 
@@ -222,10 +212,8 @@ public class ShowHNFragment extends Fragment {
                 String line;
                 StringBuilder sb = new StringBuilder();
                 while ((line = in.readLine()) != null) {
-                    //System.out.println(line);
                     sb.append(line);
                 }
-                //System.out.println(sb);
                 obj = new JSONObject(sb.toString());
                 in.close();
             } catch(Exception e) {
@@ -240,7 +228,7 @@ public class ShowHNFragment extends Fragment {
 
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
-            //super.onPostExecute(jsonObject);
+            super.onPostExecute(jsonObject);
             objs.add(jsonObject);
             CustomAdapter ca = (CustomAdapter) recyclerView.getAdapter();
             ca.notifyDataSetChanged();
