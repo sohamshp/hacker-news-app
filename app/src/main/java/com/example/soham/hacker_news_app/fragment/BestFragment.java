@@ -239,9 +239,9 @@ public class BestFragment extends Fragment {
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
             super.onPostExecute(jsonObject);
-            objs.set(this.index, jsonObject);
-            adapter = new CustomAdapter(objs);
-            recyclerView.setAdapter(adapter);
+            objs.add(jsonObject);
+            CustomAdapter ca = (CustomAdapter) recyclerView.getAdapter();
+            ca.notifyDataSetChanged();
         }
     }
 }
