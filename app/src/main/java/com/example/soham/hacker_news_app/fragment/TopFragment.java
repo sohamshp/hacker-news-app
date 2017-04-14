@@ -14,13 +14,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.soham.hacker_news_app.R;
 import com.example.soham.hacker_news_app.activity.ArticleActivity;
 import com.example.soham.hacker_news_app.activity.CustomAdapter;
-import com.example.soham.hacker_news_app.activity.MainActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,7 +58,6 @@ public class TopFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
 
     public TopFragment() {
-        // Required empty public constructor
         try {
             template = new JSONObject();
             template.put("id", -1);
@@ -104,7 +101,7 @@ public class TopFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View v = inflater.inflate(R.layout.fragment_top, container, false);
 
         recyclerView = (RecyclerView) v.findViewById(R.id.topRecyclerView);
@@ -170,14 +167,12 @@ public class TopFragment extends Fragment {
 
         Activity context;
         JSONArray result;
-        //AsyncHandler asyncHandler = null;
 
         public getTopStories(){}
 
         public getTopStories(Activity context, JSONArray result) {
             this.context = context;
             this.result = result;
-            //this.asyncHandler = (AsyncHandler) TopFragment.this;
         }
 
         @Override
@@ -194,7 +189,6 @@ public class TopFragment extends Fragment {
                 while ((line = in.readLine()) != null) {
                     sb.append(line);
                 }
-                //System.out.println(sb.toString());
                 result = new JSONArray(sb.toString());
                 in.close();
                 return result;
@@ -210,21 +204,17 @@ public class TopFragment extends Fragment {
 
         @Override
         protected void onPostExecute(JSONArray jsonArray) {
-            //super.onPostExecute(jsonArray);
+            super.onPostExecute(jsonArray);
             String baseUrl = "https://hacker-news.firebaseio.com/v0/item/";
             String endUrl = ".json";
 
             for (int i=startPos ; i<endPos ; i++) {
                 try {
                     new getTopStory(getActivity(), i).execute(baseUrl +jsonArray.get(i).toString() + endUrl);
-                    //System.out.println(jsonArray.get(i));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-
-            //adapter = new CustomAdapter(objs);
-            //recyclerView.setAdapter(adapter);
         }
     }
 
@@ -255,7 +245,6 @@ public class TopFragment extends Fragment {
                 while ((line = in.readLine()) != null) {
                     sb.append(line);
                 }
-                //System.out.println(sb);
                 obj = new JSONObject(sb.toString());
                 in.close();
             } catch(Exception e) {

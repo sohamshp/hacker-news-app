@@ -2,6 +2,7 @@ package com.example.soham.hacker_news_app.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.soham.hacker_news_app.R;
+import com.example.soham.hacker_news_app.activity.ArticleActivity;
 import com.example.soham.hacker_news_app.activity.CustomAdapter;
 
 import org.json.JSONArray;
@@ -53,7 +55,6 @@ public class ShowHNFragment extends Fragment {
 
 
     public ShowHNFragment() {
-        // Required empty public constructor
         try {
             template = new JSONObject();
             template.put("id", -1);
@@ -97,7 +98,7 @@ public class ShowHNFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View v = inflater.inflate(R.layout.fragment_show_hn, container, false);
 
         recyclerView = (RecyclerView) v.findViewById(R.id.showRecyclerView);
@@ -113,6 +114,9 @@ public class ShowHNFragment extends Fragment {
             @Override
             public void onClick(View view, int position) {
                 Toast.makeText(getContext(), "click at "+position, Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(getContext(), ArticleActivity.class);
+                i.putExtra("data", objs.get(position).toString());
+                startActivity(i);
             }
 
             @Override
@@ -186,7 +190,7 @@ public class ShowHNFragment extends Fragment {
 
         @Override
         protected void onPostExecute(JSONArray jsonArray) {
-            //super.onPostExecute(jsonArray);
+            super.onPostExecute(jsonArray);
             String baseUrl = "https://hacker-news.firebaseio.com/v0/item/";
             String endUrl = ".json";
 

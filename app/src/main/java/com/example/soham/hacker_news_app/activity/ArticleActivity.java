@@ -35,7 +35,6 @@ public class ArticleActivity extends AppCompatActivity {
         try {
             json = new JSONObject(i.getExtras().getString("data"));
             String url = json.getString("url");
-            //System.out.println(url);
             webView.loadUrl(url);
         } catch (JSONException e) {
             e.printStackTrace();

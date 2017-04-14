@@ -2,6 +2,7 @@ package com.example.soham.hacker_news_app.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.soham.hacker_news_app.R;
+import com.example.soham.hacker_news_app.activity.ArticleActivity;
 import com.example.soham.hacker_news_app.activity.CustomAdapter;
 
 import org.json.JSONArray;
@@ -53,7 +55,6 @@ public class JobsFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
 
     public JobsFragment() {
-        // Required empty public constructor
         try {
             template = new JSONObject();
             template.put("id", -1);
@@ -97,7 +98,7 @@ public class JobsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View v = inflater.inflate(R.layout.fragment_jobs, container, false);
 
         recyclerView = (RecyclerView) v.findViewById(R.id.jobRecyclerView);
@@ -113,6 +114,9 @@ public class JobsFragment extends Fragment {
             @Override
             public void onClick(View view, int position) {
                 Toast.makeText(getContext(), "click at "+position, Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(getContext(), ArticleActivity.class);
+                i.putExtra("data", objs.get(position).toString());
+                startActivity(i);
             }
 
             @Override
