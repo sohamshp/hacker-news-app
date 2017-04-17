@@ -2,11 +2,13 @@ package com.example.soham.hacker_news_app.activity;
 
 import android.content.Intent;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Window;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import com.example.soham.hacker_news_app.R;
 
@@ -14,6 +16,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ArticleActivity extends AppCompatActivity {
+
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+    private Toolbar toolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,21 +30,33 @@ public class ArticleActivity extends AppCompatActivity {
         setContentView(R.layout.article_layout);
 
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        WebView webView = (WebView) findViewById(R.id.webview);
+        NestedScrollView nestedScrollView = (NestedScrollView) findViewById(R.id.nestedScroll);
 
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setBuiltInZoomControls(true);
-        webView.getSettings().setAllowFileAccess(true);
-        webView.setWebViewClient(new WebViewClient());
+        //nestedScrollView.setFillViewport(true);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+
+        tabLayout.addTab(tabLayout.newTab().setText("Article"));
+        tabLayout.addTab(tabLayout.newTab().setText("Comments"));
+        tabLayout.setTabGravity(tabLayout.GRAVITY_FILL);
+
+        viewPager = (ViewPager) findViewById(R.id.pager);
+        tabLayout.setupWithViewPager(viewPager);
 
         Intent i = getIntent();
         JSONObject json = null;
+        String url = "";
         try {
             json = new JSONObject(i.getExtras().getString("data"));
-            String url = json.getString("url");
-            webView.loadUrl(url);
+            url = json.getString("url");
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), 2, json);
+        viewPager.setAdapter(adapter);
     }
 }

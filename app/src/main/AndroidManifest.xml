@@ -20,7 +20,7 @@
         </activity>
         <activity android:name=".activity.AboutUsActivity" />
         <activity android:name=".activity.PrivacyPolicyActivity" />
-        <activity android:name=".activity.ArticleActivity"></activity>
+        <activity android:name=".activity.ArticleActivity"/>
     </application>
 
 </manifest>
