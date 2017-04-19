@@ -44,7 +44,8 @@ public class TopFragment extends Fragment {
     JSONObject template ;
 
     static int startPos = 0;
-    static int endPos = 20;
+    static int endPos = 30;
+    static int maxPos = 150;
 
     static String baseUrl = "https://hacker-news.firebaseio.com/v0/item/";
     static String endUrl = ".json";
@@ -55,7 +56,12 @@ public class TopFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
+    //private RecyclerView.LayoutManager layoutManager;
+    private LinearLayoutManager layoutManager;
+
+    private boolean loading = true, mayScroll = true;
+    int pastVisiblesItems, visibleItemCount, totalItemCount;
+    int previousTotal = 0, visibleThreshold = 5;
 
     public TopFragment() {
         try {
@@ -127,6 +133,39 @@ public class TopFragment extends Fragment {
                 Toast.makeText(getContext(), "long click at "+position, Toast.LENGTH_SHORT).show();
             }
         }));
+
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0) {
+                    visibleItemCount = recyclerView.getChildCount();
+                    totalItemCount = layoutManager.getItemCount();
+                    pastVisiblesItems = layoutManager.findFirstVisibleItemPosition();
+
+                    if (loading && mayScroll) {
+                        if (totalItemCount > previousTotal) {
+                            loading = false;
+                            previousTotal = totalItemCount;
+                        }
+                    }
+                    if (!loading && (totalItemCount - visibleItemCount) <= (pastVisiblesItems + visibleThreshold) && mayScroll) {
+                        int start = endPos;
+                        int end = start + 30;
+                        endPos += 30;
+                        for (int i=start ; i<end ; i++) {
+                            try {
+                                new getTopStory(getActivity(), i).execute(baseUrl +jarr.get(i).toString() + endUrl);
+                            } catch (JSONException e) {
+                                mayScroll = false;
+                            }
+                        }
+                        loading = true;
+                    }
+                }
+            }
+        });
 
         try {
             new getTopStories(getActivity(), jarr).execute("https://hacker-news.firebaseio.com/v0/topstories.json");
@@ -208,6 +247,8 @@ public class TopFragment extends Fragment {
             String baseUrl = "https://hacker-news.firebaseio.com/v0/item/";
             String endUrl = ".json";
 
+            jarr = jsonArray;
+
             for (int i=startPos ; i<endPos ; i++) {
                 try {
                     new getTopStory(getActivity(), i).execute(baseUrl +jsonArray.get(i).toString() + endUrl);
@@ -236,6 +277,10 @@ public class TopFragment extends Fragment {
             HttpURLConnection connection = null;
             try {
                 //URL url = new URL("https://hacker-news.firebaseio.com/v0/topstories.json");
+                if (insertIndex > 149) {
+                    //this.cancel(true);
+                    return null;
+                }
                 URL url = new URL(urls[0]);
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
@@ -247,20 +292,20 @@ public class TopFragment extends Fragment {
                 }
                 obj = new JSONObject(sb.toString());
                 in.close();
+                connection.disconnect();
             } catch(Exception e) {
                 e.printStackTrace();
-                connection.disconnect();
-            } finally {
-                connection.disconnect();
             }
             return obj;
         }
 
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
-            objs.add(jsonObject);
-            CustomAdapter ca = (CustomAdapter) recyclerView.getAdapter();
-            ca.notifyDataSetChanged();
+            if (jsonObject != null) {
+                objs.add(jsonObject);
+                CustomAdapter ca = (CustomAdapter) recyclerView.getAdapter();
+                ca.notifyDataSetChanged();
+            }
         }
     }
 

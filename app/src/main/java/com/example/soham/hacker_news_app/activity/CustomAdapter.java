@@ -33,6 +33,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         public TextView title;
         public TextView user;
         public TextView score;
+        public TextView pos;
 
         public ViewHolder(LinearLayout ll) {
             super(ll);
@@ -41,13 +42,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             title = (TextView) ll.findViewById(R.id.titleCard);
             user = (TextView) ll.findViewById(R.id.userCard);
             score = (TextView) ll.findViewById(R.id.scoreCard);
+            pos = (TextView) ll.findViewById(R.id.posCard);
         }
 
     }
 
     public CustomAdapter(List<JSONObject> objList) {
         this.objList = objList;
-
     }
 
     @Override
@@ -65,12 +66,17 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         try {
             holder.title.setText(obj.getString("title"));
             holder.user.setText(obj.getString("by"));
-            holder.score.setText(obj.getString("score"));
+            String scoreStr = obj.getString("score");
+            scoreStr = scoreStr.concat("p");
+            holder.score.setText(scoreStr);
+            String posStr = Integer.toString(position+1);
+            holder.pos.setText(posStr);
         } catch (JSONException e) {
             //e.printStackTrace();
             holder.title.setText("...");
             holder.user.setText("...");
             holder.score.setText("...");
+            holder.pos.setText("0");
         }
     }
 

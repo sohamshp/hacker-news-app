@@ -67,24 +67,26 @@ public class MainActivity extends AppCompatActivity {
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
+/*
         fab = (FloatingActionButton) findViewById(R.id.fab);
+*/
 
         navHeader = navigationView.getHeaderView(0);
 
         txtName = (TextView) navHeader.findViewById(R.id.name);
-        txtWebsite = (TextView) navHeader.findViewById(R.id.website);
+        //txtWebsite = (TextView) navHeader.findViewById(R.id.website);
         imgNavHeaderBg = (ImageView) navHeader.findViewById(R.id.img_header_bg);
-        imgProfile = (ImageView) navHeader.findViewById(R.id.img_profile);
+        //imgProfile = (ImageView) navHeader.findViewById(R.id.img_profile);
 
         activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        /*fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Snackbar.make(v, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
 
         loadNavHeader();
 
@@ -98,8 +100,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadNavHeader() {
-        txtName.setText("txtName");
-        txtWebsite.setText("txtWebsite");
+        //txtName.setText("txtName");
+        //txtWebsite.setText("txtWebsite");
 
         //navigationView.getMenu().getItem(3).setActionView(R.layout.menu_dot);
     }
@@ -199,18 +201,6 @@ public class MainActivity extends AppCompatActivity {
                         navItemIndex = 5;
                         CURRENT_TAG = TAG_JOB;
                         break;
-                    /*
-                    case R.id.nav_about_us:
-                        // launch new intent instead of loading fragment
-                        startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
-                        drawer.closeDrawers();
-                        return true;
-                    case R.id.nav_privacy_policy:
-                        // launch new intent instead of loading fragment
-                        startActivity(new Intent(MainActivity.this, PrivacyPolicyActivity.class));
-                        drawer.closeDrawers();
-                        return true;
-                    */
                     default:
                         navItemIndex = 0;
                 }
@@ -241,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        //noinspection deprecation
         drawer.setDrawerListener(actionBarDrawerToggle);
 
         actionBarDrawerToggle.syncState();
@@ -300,9 +291,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void toggleFab() {
         if (navItemIndex == 0) {
-            fab.show();
+            //fab.show();
         } else {
-            fab.hide();
+            //fab.hide();
         }
     }
 }

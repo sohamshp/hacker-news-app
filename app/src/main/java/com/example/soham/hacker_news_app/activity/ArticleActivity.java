@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Window;
+import android.widget.TextView;
 
 import com.example.soham.hacker_news_app.R;
 
@@ -21,6 +22,9 @@ public class ArticleActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private Toolbar toolbar;
 
+    private TextView headerTitle;
+    private TextView headerUser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +35,9 @@ public class ArticleActivity extends AppCompatActivity {
 
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         NestedScrollView nestedScrollView = (NestedScrollView) findViewById(R.id.nestedScroll);
+
+        headerTitle = (TextView) findViewById(R.id.headerTitle);
+        headerUser = (TextView) findViewById(R.id.headerUser);
 
         //nestedScrollView.setFillViewport(true);
 
@@ -51,6 +58,10 @@ public class ArticleActivity extends AppCompatActivity {
         String url = "";
         try {
             json = new JSONObject(i.getExtras().getString("data"));
+            String username = json.getString("by");
+            username = "by - ".concat(username);
+            headerUser.setText(username);
+            headerTitle.setText(json.getString("title"));
             url = json.getString("url");
         } catch (JSONException e) {
             e.printStackTrace();

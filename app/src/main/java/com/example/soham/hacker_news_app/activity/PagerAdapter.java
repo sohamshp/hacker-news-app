@@ -22,6 +22,7 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
 
     int tabCount;
     String url;
+    String text;
     JSONObject object;
 
     public PagerAdapter(FragmentManager fm, int tabCount, JSONObject json) {
@@ -29,7 +30,8 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
         this.tabCount = tabCount;
         this.object = json;
         try {
-            this.url = json.getString("url");
+            this.url = object.getString("url");
+            this.text = object.getString("text");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -42,6 +44,8 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
                 ArticleFragment tab1 = new ArticleFragment();
                 Bundle b = new Bundle();
                 b.putString("url", url);
+                b.putString("text", text);
+                b.putString("json", object.toString());
                 tab1.setArguments(b);
                 return tab1;
             case 1:

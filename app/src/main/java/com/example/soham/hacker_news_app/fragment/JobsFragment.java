@@ -42,7 +42,11 @@ public class JobsFragment extends Fragment {
     List<JSONObject> objs;
 
     static int startPos = 0;
-    static int endPos = 20;
+    static int endPos = 30;
+    static int maxPos = 150;
+
+    String baseUrl = "https://hacker-news.firebaseio.com/v0/item/";
+    String endUrl = ".json";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -52,7 +56,12 @@ public class JobsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
+    //private RecyclerView.LayoutManager layoutManager;
+    private LinearLayoutManager layoutManager;
+
+    private boolean loading = true, mayScroll = true;
+    int pastVisiblesItems, visibleItemCount, totalItemCount;
+    int previousTotal = 0, visibleThreshold = 5;
 
     public JobsFragment() {
         try {
@@ -125,6 +134,38 @@ public class JobsFragment extends Fragment {
             }
         }));
 
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0) {
+                    visibleItemCount = recyclerView.getChildCount();
+                    totalItemCount = layoutManager.getItemCount();
+                    pastVisiblesItems = layoutManager.findFirstVisibleItemPosition();
+
+                    if (loading && mayScroll) {
+                        if (totalItemCount > previousTotal) {
+                            loading = false;
+                            previousTotal = totalItemCount;
+                        }
+                    }
+                    if (!loading && (totalItemCount - visibleItemCount) <= (pastVisiblesItems + visibleThreshold) && mayScroll) {
+                        int start = endPos;
+                        int end = start + 30;
+                        endPos += 30;
+                        for (int i=start ; i<end ; i++) {
+                            try {
+                                new getJobStory(getActivity(), i).execute(baseUrl +jarr.get(i).toString() + endUrl);
+                            } catch (Exception e) {
+                                mayScroll = false;
+                            }
+                        }
+                        loading = true;
+                    }
+                }
+            }
+        });
+
         try {
             new getJobStories(getActivity(), jarr).execute("https://hacker-news.firebaseio.com/v0/jobstories.json");
         } catch (Exception e) {
@@ -193,6 +234,8 @@ public class JobsFragment extends Fragment {
             String baseUrl = "https://hacker-news.firebaseio.com/v0/item/";
             String endUrl = ".json";
 
+            jarr = jsonArray;
+
             for (int i=startPos ; i<endPos ; i++) {
                 try {
                     new getJobStory(getActivity(), i).execute(baseUrl +jsonArray.get(i).toString() + endUrl);
@@ -222,6 +265,10 @@ public class JobsFragment extends Fragment {
             //https://hacker-news.firebaseio.com/v0/item/<<8863>>.json?print=pretty
             HttpURLConnection connection = null;
             try {
+                if (index > 149) {
+                    //this.cancel(true);
+                    return null;
+                }
                 //URL url = new URL("https://hacker-news.firebaseio.com/v0/topstories.json");
                 URL url = new URL(urls[0]);
                 connection = (HttpURLConnection) url.openConnection();
@@ -247,9 +294,11 @@ public class JobsFragment extends Fragment {
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
             super.onPostExecute(jsonObject);
-            objs.add(jsonObject);
-            CustomAdapter ca = (CustomAdapter) recyclerView.getAdapter();
-            ca.notifyDataSetChanged();
+            if (jsonObject != null) {
+                objs.add(jsonObject);
+                CustomAdapter ca = (CustomAdapter) recyclerView.getAdapter();
+                ca.notifyDataSetChanged();
+            }
         }
     }
 

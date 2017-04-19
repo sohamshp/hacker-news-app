@@ -11,8 +11,12 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import com.example.soham.hacker_news_app.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class ArticleFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -27,6 +31,8 @@ public class ArticleFragment extends Fragment {
     WebView wv;
 
     private String url;
+    private String text;
+    private JSONObject object;
 
     public ArticleFragment() {
         // Required empty public constructor
@@ -62,7 +68,16 @@ public class ArticleFragment extends Fragment {
         WebView wv = (WebView) v.findViewById(R.id.webView);
 
         url = this.getArguments().getString("url");
+        text = this.getArguments().getString("text");
+        try {
+            object = new JSONObject(this.getArguments().getString("json"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        /*Toast.makeText(getContext(), url, Toast.LENGTH_SHORT).show();
         System.out.println(url);
+        System.out.println(text);*/
 
         WebSettings ws = wv.getSettings();
         ws.setJavaScriptEnabled(true);
@@ -74,7 +89,21 @@ public class ArticleFragment extends Fragment {
         wv.setWebViewClient(new WebViewClient());
         wv.setWebChromeClient(new WebChromeClient());
 
-        wv.loadUrl(url);
+        if (url == null || url == ""){
+            if (text == null || text == "") {
+                String title = "";
+                try {
+                    title = object.getString("title");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                wv.loadData(title, "text/html", "utf-8");
+            } else {
+                wv.loadData(text, "text/html", "utf-8");
+            }
+        } else {
+            wv.loadUrl(url);
+        }
 
         return v;
     }

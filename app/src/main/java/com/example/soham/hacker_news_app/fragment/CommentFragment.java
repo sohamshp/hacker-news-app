@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.soham.hacker_news_app.R;
-import com.example.soham.hacker_news_app.activity.CommentListAdapter;
+import com.example.soham.hacker_news_app.activity.CommentAdapter;
 
 import org.json.JSONObject;
 
@@ -36,9 +37,11 @@ public class CommentFragment extends Fragment {
     private String mParam2;
 
     private List<JSONObject> objectList;
-    private ListView listView;
-    private CommentListAdapter adapter;
     private List<String> objectIds;
+
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     public CommentFragment() {
         // Required empty public constructor
@@ -69,22 +72,25 @@ public class CommentFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_comment, container, false);
 
-        listView = (ListView) v.findViewById(R.id.commentListView);
+        recyclerView = (RecyclerView) v.findViewById(R.id.commentRecyclerView);
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+
         objectList = new ArrayList<JSONObject>();
 
-        objectIds = this.getArguments().getStringArrayList("objectIds");
+        adapter = new CommentAdapter(objectList);
+        recyclerView.setAdapter(adapter);
 
-        adapter = new CommentListAdapter(getContext(), objectList);
-        listView.setAdapter(adapter);
+        Bundle b = getArguments();
+        objectIds = b.getStringArrayList("objectIds");
 
-        for (int i=0 ; i<objectIds.size() ; i++) {
-            String id = objectIds.get(i);
-            //System.out.println(id);
-            new GetCommentTask(getActivity(), i).execute("https://hacker-news.firebaseio.com/v0/item/"+id+".json");
+        for (int i=0 ; i<objectIds.size()-1 ; i++) {
+            try {
+                new GetCommentTask(getActivity(), i).execute("https://hacker-news.firebaseio.com/v0/item/"+objectIds.get(i)+".json");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-
-        //adapter = new CommentListAdapter(getContext(), objectList);
-        //listView.setAdapter(adapter);
 
         return v;
     }
@@ -130,7 +136,7 @@ public class CommentFragment extends Fragment {
                     sb.append(line);
                 }
                 JSONObject obj = new JSONObject(sb.toString());
-                //System.out.println(obj.getString("text"));
+                System.out.println(obj.getString("text"));
                 in.close();
                 return obj;
             } catch(Exception e) {
@@ -145,10 +151,8 @@ public class CommentFragment extends Fragment {
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
             objList.add(jsonObject);
-            //System.out.println(objectList.size());
-            CommentListAdapter cla = (CommentListAdapter) listView.getAdapter();
-            cla.notifyDataSetChanged();
-            //listView.setAdapter(new CommentListAdapter(getContext(), objList));
+            CommentAdapter ca = (CommentAdapter) recyclerView.getAdapter();
+            ca.notifyDataSetChanged();
         }
     }
 }
