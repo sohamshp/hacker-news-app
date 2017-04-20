@@ -166,17 +166,10 @@ public class TopFragment extends Fragment {
                             previousTotal = totalItemCount;
                         }
                     }
-                    //System.out.println("pages :" + pages + " total: " + totalItemCount + " fisrt: " + pastVisiblesItems
-                    // + " visible: " + visibleItemCount);
-                    //System.out.println((pastVisiblesItems+visibleItemCount == totalItemCount));
-                    //System.out.println((totalItemCount == (30*pages)));
-                    //if (!loading && (totalItemCount - visibleItemCount) <= (pastVisiblesItems + visibleThreshold) && mayScroll) {
                     if ((pastVisiblesItems+visibleItemCount >= totalItemCount) && (totalItemCount != 0) && (totalItemCount == (30*pages))) {
                         int start = pages*30;
                         int end = start + 30;
                         pages += 1;
-                        System.out.println("loading more " + pages + " " + totalItemCount);
-                        //Toast.makeText(getContext(), "loading more...", Toast.LENGTH_SHORT).show();
                         for (int i=start ; i<end ; i++) {
                             try {
                                 new getTopStory(getActivity(), i).execute(baseUrl +jarr.get(i).toString() + endUrl);

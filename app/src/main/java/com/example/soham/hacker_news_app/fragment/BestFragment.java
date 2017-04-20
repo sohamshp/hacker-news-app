@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.example.soham.hacker_news_app.R;
 import com.example.soham.hacker_news_app.activity.ArticleActivity;
 import com.example.soham.hacker_news_app.activity.CustomAdapter;
+import com.example.soham.hacker_news_app.activity.SavedStoryDB;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,6 +45,7 @@ public class BestFragment extends Fragment {
     static int startPos = 0;
     static int endPos = 30;
     static int maxPos = 150;
+    static int pages = 1;
 
     String baseUrl = "https://hacker-news.firebaseio.com/v0/item/";
     String endUrl = ".json";
@@ -130,8 +132,14 @@ public class BestFragment extends Fragment {
 
             @Override
             public void onLongClick(View view, int position) {
-                Toast.makeText(getContext(), "long click at "+position, Toast.LENGTH_SHORT).show();
-            }
+
+                SavedStoryDB savedStoryDB = new SavedStoryDB(getContext());
+                savedStoryDB.open();
+                String jsonString = objs.get(position).toString();
+                long code = savedStoryDB.insertEntry(jsonString);
+                savedStoryDB.close();
+
+                Toast.makeText(getContext(), code+"", Toast.LENGTH_SHORT).show();            }
         }));
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -149,10 +157,10 @@ public class BestFragment extends Fragment {
                             previousTotal = totalItemCount;
                         }
                     }
-                    if (!loading && (totalItemCount - visibleItemCount) <= (pastVisiblesItems + visibleThreshold) && mayScroll) {
-                        int start = endPos;
+                    if ((pastVisiblesItems+visibleItemCount >= totalItemCount) && (totalItemCount != 0) && (totalItemCount == (30*pages))) {
+                        int start = pages*30;
                         int end = start + 30;
-                        endPos += 30;
+                        pages += 1;
                         for (int i=start ; i<end ; i++) {
                             try {
                                 new getBestStory(getActivity(), i).execute(baseUrl +jarr.get(i).toString() + endUrl);
