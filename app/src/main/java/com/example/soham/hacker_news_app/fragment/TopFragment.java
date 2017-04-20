@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 import com.example.soham.hacker_news_app.R;
 import com.example.soham.hacker_news_app.activity.ArticleActivity;
 import com.example.soham.hacker_news_app.activity.CustomAdapter;
+import com.example.soham.hacker_news_app.activity.SavedStoryDB;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,6 +48,7 @@ public class TopFragment extends Fragment {
     static int startPos = 0;
     static int endPos = 30;
     static int maxPos = 150;
+    static int pages = 1;
 
     static String baseUrl = "https://hacker-news.firebaseio.com/v0/item/";
     static String endUrl = ".json";
@@ -106,7 +109,7 @@ public class TopFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_top, container, false);
 
@@ -130,11 +133,24 @@ public class TopFragment extends Fragment {
 
             @Override
             public void onLongClick(View view, int position) {
-                Toast.makeText(getContext(), "long click at "+position, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "long click at "+position, Toast.LENGTH_SHORT).show();
+
+                SavedStoryDB savedStoryDB = new SavedStoryDB(getContext());
+                savedStoryDB.open();
+                String jsonString = objs.get(position).toString();
+                long code = savedStoryDB.insertEntry(jsonString);
+                savedStoryDB.close();
+
+                Toast.makeText(getContext(), code+"", Toast.LENGTH_SHORT).show();
             }
         }));
 
-
+        try {
+            new getTopStories(getActivity(), jarr).execute("https://hacker-news.firebaseio.com/v0/topstories.json");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        pages = 1;
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -150,15 +166,22 @@ public class TopFragment extends Fragment {
                             previousTotal = totalItemCount;
                         }
                     }
-                    if (!loading && (totalItemCount - visibleItemCount) <= (pastVisiblesItems + visibleThreshold) && mayScroll) {
-                        int start = endPos;
+                    //System.out.println("pages :" + pages + " total: " + totalItemCount + " fisrt: " + pastVisiblesItems
+                    // + " visible: " + visibleItemCount);
+                    //System.out.println((pastVisiblesItems+visibleItemCount == totalItemCount));
+                    //System.out.println((totalItemCount == (30*pages)));
+                    //if (!loading && (totalItemCount - visibleItemCount) <= (pastVisiblesItems + visibleThreshold) && mayScroll) {
+                    if ((pastVisiblesItems+visibleItemCount >= totalItemCount) && (totalItemCount != 0) && (totalItemCount == (30*pages))) {
+                        int start = pages*30;
                         int end = start + 30;
-                        endPos += 30;
+                        pages += 1;
+                        System.out.println("loading more " + pages + " " + totalItemCount);
+                        //Toast.makeText(getContext(), "loading more...", Toast.LENGTH_SHORT).show();
                         for (int i=start ; i<end ; i++) {
                             try {
                                 new getTopStory(getActivity(), i).execute(baseUrl +jarr.get(i).toString() + endUrl);
                             } catch (JSONException e) {
-                                mayScroll = false;
+                                //mayScroll = false;
                             }
                         }
                         loading = true;
@@ -166,12 +189,6 @@ public class TopFragment extends Fragment {
                 }
             }
         });
-
-        try {
-            new getTopStories(getActivity(), jarr).execute("https://hacker-news.firebaseio.com/v0/topstories.json");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         return v;
     }
@@ -249,8 +266,9 @@ public class TopFragment extends Fragment {
 
             jarr = jsonArray;
 
-            for (int i=startPos ; i<endPos ; i++) {
+            for (int i=0 ; i<30 ; i++) {
                 try {
+                    //System.out.println("initial "+ i);
                     new getTopStory(getActivity(), i).execute(baseUrl +jsonArray.get(i).toString() + endUrl);
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -26,6 +26,7 @@ import com.example.soham.hacker_news_app.fragment.AskHNFragment;
 import com.example.soham.hacker_news_app.fragment.BestFragment;
 import com.example.soham.hacker_news_app.fragment.JobsFragment;
 import com.example.soham.hacker_news_app.fragment.NewFragment;
+import com.example.soham.hacker_news_app.fragment.SavedFragment;
 import com.example.soham.hacker_news_app.fragment.ShowHNFragment;
 import com.example.soham.hacker_news_app.fragment.TopFragment;
 
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_SHOW = "Show HN";
     private static final String TAG_ASK = "Ask HN";
     private static final String TAG_JOB = "JOBS";
+    private static final String TAG_SAVED = "Saved Stories";
     public static String CURRENT_TAG = TAG_TOP;
 
     private String[] activityTitles;
@@ -67,26 +69,17 @@ public class MainActivity extends AppCompatActivity {
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-/*
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-*/
+
+        setTitle("Hacker News");
 
         navHeader = navigationView.getHeaderView(0);
 
         txtName = (TextView) navHeader.findViewById(R.id.name);
-        //txtWebsite = (TextView) navHeader.findViewById(R.id.website);
         imgNavHeaderBg = (ImageView) navHeader.findViewById(R.id.img_header_bg);
-        //imgProfile = (ImageView) navHeader.findViewById(R.id.img_profile);
 
         activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
 
-        /*fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Snackbar.make(v, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
+        //System.out.println(activityTitles.length);
 
         loadNavHeader();
 
@@ -102,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
     private void loadNavHeader() {
         //txtName.setText("txtName");
         //txtWebsite.setText("txtWebsite");
-
         //navigationView.getMenu().getItem(3).setActionView(R.layout.menu_dot);
     }
 
@@ -113,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
             drawer.closeDrawers();
-            toggleFab();
             return;
         }
 
@@ -159,6 +150,9 @@ public class MainActivity extends AppCompatActivity {
             case 5:
                 JobsFragment jobFragment = new JobsFragment();
                 return jobFragment;
+            case 6:
+                SavedFragment savedFragment = new SavedFragment();
+                return savedFragment;
             default:
                     return new TopFragment();
         }
@@ -200,6 +194,11 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_job:
                         navItemIndex = 5;
                         CURRENT_TAG = TAG_JOB;
+                        break;
+                    case R.id.nav_saved:
+                        navItemIndex = 6;
+                        //System.out.println("clicked");
+                        CURRENT_TAG = TAG_SAVED;
                         break;
                     default:
                         navItemIndex = 0;

@@ -13,6 +13,7 @@
     <string name="nav_show_hn">Show HN</string>
     <string name="nav_ask_hn">Ask HN</string>
     <string name="nav_job">Jobs</string>
+    <string name="saved_stories">Saved Stories</string>
 
     <!-- Toolbar titles when navigation menu item is selected -->
     <string-array name="nav_item_activity_titles">
@@ -22,6 +23,7 @@
         <item>Show HN</item>
         <item>Ask HN</item>
         <item>Jobs</item>
+        <item>Saved Stories</item>
     </string-array>
 
     <string name="activity_title_about_us">About Us</string>
